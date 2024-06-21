@@ -19,7 +19,8 @@ subprojects {
         mapOf(
           "indent_size" to "2",
           "continuation_indent_size" to "2",
-          "max_line_length" to 150
+          "max_line_length" to 150,
+          "standard_package-naming" to "disables"
         )
       )
       licenseHeaderFile(rootProject.file("spotless/copyright.kt"))

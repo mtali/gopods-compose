@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay
+package com.colisa.podplay.feaure.podcast.navigation
 
-import android.app.Application
-
-class App : Application()
+const val PODCAST_DETAIL_ROUTE = "podcast_detail_route"
