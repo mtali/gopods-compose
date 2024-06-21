@@ -27,8 +27,14 @@ fun NavController.navigateToPodcasts(navOptions: NavOptions? = null) {
   navigate(PODCASTS_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.podcastsScreen() {
+fun NavGraphBuilder.podcastsScreen(
+  onClickAbout: () -> Unit,
+  onClickSettings: () -> Unit,
+) {
   composable(route = PODCASTS_ROUTE) {
-    PodcastsRoute()
+    PodcastsRoute(
+      onClickAbout = onClickAbout,
+      onClickSettings = onClickSettings,
+    )
   }
 }

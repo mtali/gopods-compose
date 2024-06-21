@@ -17,7 +17,22 @@ package com.colisa.podplay.feaure.podcasts
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class PodcastsViewModel @Inject constructor() : ViewModel()
+class PodcastsViewModel @Inject constructor() : ViewModel() {
+  private val _searchQuery = MutableStateFlow("")
+  val searchQuery: StateFlow<String> = _searchQuery
+
+  fun onSearchQueryChange(value: String) {
+    _searchQuery.update { value }
+  }
+
+  fun onSearch() {
+    Timber.d("Searching: ${searchQuery.value}")
+  }
+}
