@@ -75,8 +75,7 @@ fun PodcastsRoute(
     onClickAbout = onClickAbout,
     onSearchQueryChange = viewModel::onSearchQueryChange,
     onSearch = viewModel::onSearch,
-
-    )
+  )
 }
 
 @Composable
