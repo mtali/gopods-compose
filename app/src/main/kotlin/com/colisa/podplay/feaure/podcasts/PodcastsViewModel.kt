@@ -16,10 +16,14 @@
 package com.colisa.podplay.feaure.podcasts
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.colisa.podplay.core.utils.isRunning
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,11 +32,18 @@ class PodcastsViewModel @Inject constructor() : ViewModel() {
   private val _searchQuery = MutableStateFlow("")
   val searchQuery: StateFlow<String> = _searchQuery
 
+  private var searchJob: Job? = null
+
   fun onSearchQueryChange(value: String) {
     _searchQuery.update { value }
   }
 
   fun onSearch() {
-    Timber.d("Searching: ${searchQuery.value}")
+    val query = searchQuery.value.trim()
+    if (query.isBlank()) return
+    if (searchJob.isRunning()) return
+    searchJob = viewModelScope.launch {
+      Timber.d("Searching: $query")
+    }
   }
 }
