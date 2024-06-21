@@ -3,6 +3,7 @@ import com.colisa.podplay.Configuration
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.jetbrains.kotlin.android)
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -43,7 +44,7 @@ android {
     buildConfig = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.1"
+    kotlinCompilerExtensionVersion = "1.5.11"
   }
   packaging {
     resources {
