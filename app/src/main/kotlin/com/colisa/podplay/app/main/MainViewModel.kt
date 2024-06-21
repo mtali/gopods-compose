@@ -16,5 +16,8 @@
 package com.colisa.podplay.app.main
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel constructor() : ViewModel()
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel()

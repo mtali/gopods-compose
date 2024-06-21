@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.jetbrains.kotlin.android) apply false
   alias(libs.plugins.ksp) apply false
+  alias(libs.plugins.hilt) apply false
   alias(libs.plugins.spotless)
 }
 
@@ -20,8 +21,7 @@ subprojects {
         mapOf(
           "indent_size" to "2",
           "continuation_indent_size" to "2",
-          "max_line_length" to 150,
-          "standard_package-naming" to "disables"
+          "max_line_length" to 150
         )
       )
       licenseHeaderFile(rootProject.file("spotless/copyright.kt"))

@@ -15,4 +15,46 @@
  */
 package com.colisa.podplay.app.ui
 
-class GopodsAppState
+import android.annotation.SuppressLint
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+
+@Composable
+fun rememberGopodsAppState(
+  navController: NavHostController = rememberNavController(),
+  coroutineScope: CoroutineScope = rememberCoroutineScope(),
+): GopodsAppState {
+  return GopodsAppState(
+    navController = navController,
+    coroutineScope = coroutineScope,
+  )
+}
+
+@Stable
+@SuppressLint("RestrictedApi")
+class GopodsAppState(
+  val navController: NavHostController,
+  val coroutineScope: CoroutineScope,
+) {
+
+  val backStack = navController.currentBackStack
+    .map { stackEntries ->
+      stackEntries.map { entry -> entry.destination.route }
+    }
+    .stateIn(
+      scope = coroutineScope,
+      started = SharingStarted.WhileSubscribed(5_000),
+      initialValue = emptyList(),
+    )
+
+  fun onBackClick() {
+    navController.popBackStack()
+  }
+}

@@ -15,4 +15,24 @@
  */
 package com.colisa.podplay.app.ui
 
-class GopodsApp
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.colisa.podplay.app.navigation.GopodsNavHost
+import com.colisa.podplay.feaure.podcasts.navigation.PODCASTS_ROUTE
+
+@Composable
+fun GopodsApp(
+  appState: GopodsAppState,
+) {
+  Scaffold { innerPadding ->
+    Column(modifier = Modifier.padding(innerPadding)) {
+      GopodsNavHost(
+        startDestination = PODCASTS_ROUTE,
+        appState = appState,
+      )
+    }
+  }
+}

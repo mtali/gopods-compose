@@ -15,4 +15,29 @@
  */
 package com.colisa.podplay.app.navigation
 
-class GopodsNavHost
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import com.colisa.podplay.app.ui.GopodsAppState
+import com.colisa.podplay.feaure.podcast.navigation.podcastDetailScreen
+import com.colisa.podplay.feaure.podcasts.navigation.podcastsScreen
+import com.colisa.podplay.feaure.settings.navigation.settingsScreen
+
+@Composable
+fun GopodsNavHost(
+  startDestination: String,
+  appState: GopodsAppState,
+  modifier: Modifier = Modifier,
+) {
+  val navController = appState.navController
+
+  NavHost(
+    navController = navController,
+    startDestination = startDestination,
+    modifier = modifier,
+  ) {
+    settingsScreen()
+    podcastDetailScreen()
+    podcastsScreen()
+  }
+}

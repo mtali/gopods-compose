@@ -15,14 +15,9 @@
  */
 package com.colisa.podplay.feaure.podcast
 
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-@Composable
-fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel()) {
-  PodcastDetailScreen()
-}
-
-@Composable
-private fun PodcastDetailScreen() {
-}
+@HiltViewModel
+class PodcastDetailViewModel @Inject constructor() : ViewModel()

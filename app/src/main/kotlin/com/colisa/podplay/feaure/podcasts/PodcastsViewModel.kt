@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.feaure.podcast
+package com.colisa.podplay.feaure.podcasts
 
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-@Composable
-fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel()) {
-  PodcastDetailScreen()
-}
-
-@Composable
-private fun PodcastDetailScreen() {
-}
+@HiltViewModel
+class PodcastsViewModel @Inject constructor() : ViewModel()

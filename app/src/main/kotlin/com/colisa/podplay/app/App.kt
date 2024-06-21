@@ -18,8 +18,10 @@ package com.colisa.podplay.app
 import android.app.Application
 import com.colisa.podplay.BuildConfig
 import com.colisa.podplay.core.logs.ReleaseTree
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class App : Application() {
   override fun onCreate() {
     super.onCreate()

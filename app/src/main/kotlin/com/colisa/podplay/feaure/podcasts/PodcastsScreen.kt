@@ -16,12 +16,13 @@
 package com.colisa.podplay.feaure.podcasts
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun SettingsRoute() {
-  SettingsScreen()
+fun PodcastsRoute(viewModel: PodcastsViewModel = hiltViewModel()) {
+  PodcastsScreen()
 }
 
 @Composable
-private fun SettingsScreen() {
+private fun PodcastsScreen() {
 }

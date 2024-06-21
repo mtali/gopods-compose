@@ -15,4 +15,20 @@
  */
 package com.colisa.podplay.feaure.podcast.navigation
 
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import com.colisa.podplay.feaure.podcast.PodcastDetailRoute
+
 const val PODCAST_DETAIL_ROUTE = "podcast_detail_route"
+
+fun NavController.navigateToPostDetail(navOptions: NavOptions? = null) {
+  navigate(PODCAST_DETAIL_ROUTE, navOptions)
+}
+
+fun NavGraphBuilder.podcastDetailScreen() {
+  composable(route = PODCAST_DETAIL_ROUTE) {
+    PodcastDetailRoute()
+  }
+}
