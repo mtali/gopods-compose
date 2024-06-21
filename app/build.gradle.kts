@@ -22,6 +22,10 @@ android {
     vectorDrawables {
       useSupportLibrary = true
     }
+
+    ksp {
+      arg("room.schemaLocation", "$projectDir/schemas")
+    }
   }
 
   buildTypes {
@@ -78,6 +82,11 @@ dependencies {
   implementation(libs.hilt.android)
   implementation(libs.androidx.hilt.navigation.compose)
   ksp(libs.hilt.compiler)
+
+  // Room
+  implementation(libs.room.runtime)
+  implementation(libs.room.ktx)
+  ksp(libs.room.compiler)
 
   // Testing
   testImplementation(libs.junit)
