@@ -3,6 +3,7 @@ import com.colisa.podplay.Configuration
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.jetbrains.kotlin.android)
+  alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.hilt)
   alias(libs.plugins.ksp)
 }
@@ -90,6 +91,16 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.room.ktx)
   ksp(libs.room.compiler)
+
+  // Serialization
+  implementation(libs.kotlinx.serialization)
+
+  // Network
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.kotlinx.converter)
+  implementation(libs.okhttp)
+  implementation(libs.logging.interceptor)
+
 
   // Testing
   testImplementation(libs.junit)
