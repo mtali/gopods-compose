@@ -15,9 +15,12 @@
  */
 package com.colisa.podplay.core.utils
 
+import kotlinx.coroutines.Job
 import java.time.Instant
 import java.util.UUID
 
 fun newUid() = "${UUID.randomUUID()}"
 
 fun now(): Instant = Instant.now()
+
+fun Job?.isRunning() = this?.isActive == true
