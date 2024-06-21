@@ -75,6 +75,9 @@ dependencies {
   // Compose Navigation
   implementation(libs.androidx.navigation.compose)
 
+  // Compose Lifecycle
+  implementation(libs.androidx.lifecycle.compose)
+
   // Timber
   implementation(libs.timber)
 
