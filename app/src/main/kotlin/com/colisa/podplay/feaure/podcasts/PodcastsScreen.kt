@@ -134,6 +134,11 @@ private fun PodcastListItem(podcast: Podcast) {
     headlineContent = {
       Text(text = podcast.feedTitle)
     },
+    supportingContent = {
+      Text(text = "${podcast.releaseDate}") // TODO: Format this
+    },
+    leadingContent = {
+    },
   )
 }
 

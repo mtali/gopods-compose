@@ -25,6 +25,6 @@ data class Podcast(
   val feedDescription: String,
   val imageUrl: String,
   val imageUrl600: String,
-  val lastUpdated: LocalDateTime,
+  val releaseDate: LocalDateTime,
   val subscribed: Boolean = false,
 )

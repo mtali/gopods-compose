@@ -49,7 +49,7 @@ fun ItunesPodcastSearchResponse.asPodcastEntities() =
           feedDescription = "",
           imageUrl = it.artworkUrl100,
           imageUrl600 = it.artworkUrl600,
-          lastUpdated = it.releaseDate,
+          releaseDate = it.releaseDate,
         )
       }
   }

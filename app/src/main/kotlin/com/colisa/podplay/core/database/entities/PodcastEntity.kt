@@ -34,7 +34,7 @@ data class PodcastEntity(
   @ColumnInfo(name = "feed_description") val feedDescription: String = "",
   @ColumnInfo(name = "image_url") val imageUrl: String = "",
   @ColumnInfo(name = "image_url600") val imageUrl600: String = "",
-  @ColumnInfo(name = "last_updated") val lastUpdated: String = "",
+  @ColumnInfo(name = "release_date") val releaseDate: String = "",
   @ColumnInfo(name = "subscribed") val subscribed: Boolean = false,
 )
 
@@ -47,7 +47,7 @@ fun PodcastEntity.toDomain() =
     feedDescription = feedDescription,
     imageUrl = imageUrl,
     imageUrl600 = imageUrl600,
-    lastUpdated = LocalDateTime.now(), // TODO: Work with this
+    releaseDate = LocalDateTime.now(), // TODO: Work with this
     subscribed = subscribed,
   )
 
