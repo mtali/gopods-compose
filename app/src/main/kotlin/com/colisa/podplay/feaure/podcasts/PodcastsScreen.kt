@@ -77,7 +77,6 @@ import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.utils.display
 import com.colisa.podplay.core.utils.toast
-import timber.log.Timber
 
 @Composable
 fun PodcastsRoute(
@@ -127,7 +126,6 @@ private fun PodcastsScreen(
       onSearch = onSearch,
     )
 
-    Timber.tag("fuck").d("$uiState ${uiState.showLoading()}")
     LinearLoading(visible = uiState.showLoading())
 
     LazyColumn(modifier = Modifier.weight(1f)) {
