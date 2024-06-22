@@ -16,6 +16,9 @@
 package com.colisa.podplay.feaure.podcasts
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +43,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -73,6 +77,7 @@ import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.utils.display
 import com.colisa.podplay.core.utils.toast
+import timber.log.Timber
 
 @Composable
 fun PodcastsRoute(
@@ -121,6 +126,10 @@ private fun PodcastsScreen(
       searchActivated = showMode == ShowMode.SEARCH,
       onSearch = onSearch,
     )
+
+    Timber.tag("fuck").d("$uiState ${uiState.showLoading()}")
+    LinearLoading(visible = uiState.showLoading())
+
     LazyColumn(modifier = Modifier.weight(1f)) {
       when (uiState) {
         PodcastsUiState.Error -> Unit
@@ -131,6 +140,19 @@ private fun PodcastsScreen(
           }
         }
       }
+    }
+  }
+}
+
+@Composable
+private fun LinearLoading(visible: Boolean, modifier: Modifier = Modifier) {
+  Box(modifier = modifier) {
+    AnimatedVisibility(
+      visible = visible,
+      enter = slideInVertically(),
+      exit = slideOutVertically(),
+    ) {
+      LinearProgressIndicator(Modifier.fillMaxWidth())
     }
   }
 }
@@ -154,7 +176,7 @@ private fun PodcastListItem(podcast: Podcast) {
         contentScale = ContentScale.Crop,
         modifier = Modifier
           .size(60.dp)
-          .clip(RoundedCornerShape(8.dp))
+          .clip(RoundedCornerShape(8.dp)),
       )
     },
   )

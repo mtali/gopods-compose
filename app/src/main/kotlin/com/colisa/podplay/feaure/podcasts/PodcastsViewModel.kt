@@ -78,6 +78,7 @@ class PodcastsViewModel @Inject constructor(
   fun onSearchQueryChange(value: String) {
     if (value.trim() == "" && searchJob.isRunning()) {
       searchJob?.cancel()
+      stopLoading()
       _podcastsSearchResult.update { emptyList() }
     }
     _searchQuery.update { value }
@@ -142,4 +143,8 @@ sealed interface PodcastsUiState {
     val podcasts: List<Podcast>,
     val showMode: ShowMode,
   ) : PodcastsUiState
+}
+
+fun PodcastsUiState.showLoading(): Boolean {
+  return this is PodcastsUiState.Loading || (this is PodcastsUiState.Success && this.isLoading)
 }

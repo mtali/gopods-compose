@@ -25,5 +25,4 @@ fun String.toLocalDateTime(): LocalDateTime {
   return zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime()
 }
 
-
 fun LocalDateTime.display() = "${this.toLocalDate()}"
