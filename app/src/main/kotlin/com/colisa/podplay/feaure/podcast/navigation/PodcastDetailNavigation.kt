@@ -15,20 +15,32 @@
  */
 package com.colisa.podplay.feaure.podcast.navigation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.colisa.podplay.feaure.podcast.PodcastDetailRoute
 
-const val PODCAST_DETAIL_ROUTE = "podcast_detail_route"
+private const val PODCAST_ID = "podcastId"
+const val PODCAST_DETAIL_ROUTE = "podcast_detail_route/{$PODCAST_ID}"
+
+class PodcastDetailArg(val podcastId: Long) {
+  constructor(savedStateHandle: SavedStateHandle) :
+    this(checkNotNull(savedStateHandle.get<Long>(PODCAST_ID)))
+}
 
 fun NavController.navigateToPostDetail(podcastId: Long, navOptions: NavOptions? = null) {
-  navigate(PODCAST_DETAIL_ROUTE, navOptions)
+  navigate("podcast_detail_route/$podcastId", navOptions)
 }
 
 fun NavGraphBuilder.podcastDetailScreen() {
-  composable(route = PODCAST_DETAIL_ROUTE) {
+  composable(
+    route = PODCAST_DETAIL_ROUTE,
+    arguments = listOf(navArgument(PODCAST_ID) { type = NavType.LongType }),
+  ) {
     PodcastDetailRoute()
   }
 }
