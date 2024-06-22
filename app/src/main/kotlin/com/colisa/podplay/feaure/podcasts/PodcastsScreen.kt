@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -51,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -60,6 +64,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.TopBarTitle
+import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.utils.toast
 
 @Composable
 fun PodcastsRoute(
@@ -67,7 +73,12 @@ fun PodcastsRoute(
   onClickAbout: () -> Unit,
   onClickSettings: () -> Unit,
 ) {
+  val context = LocalContext.current
+  viewModel.toastHandler = { context.toast(it) }
+
   val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiMode by viewModel.mode.collectAsStateWithLifecycle()
 
   PodcastsScreen(
     searchQuery = searchQuery,
@@ -75,6 +86,9 @@ fun PodcastsRoute(
     onClickAbout = onClickAbout,
     onSearchQueryChange = viewModel::onSearchQueryChange,
     onSearch = viewModel::onSearch,
+    onSearchActivated = viewModel::onSearchActivated,
+    uiMode = uiMode,
+    uiState = uiState,
   )
 }
 
@@ -85,6 +99,9 @@ private fun PodcastsScreen(
   onClickAbout: () -> Unit,
   onSearchQueryChange: (String) -> Unit,
   onSearch: () -> Unit,
+  uiMode: UiMode,
+  onSearchActivated: (Boolean) -> Unit,
+  uiState: PodcastsUiState,
 ) {
   Column(modifier = Modifier.fillMaxSize()) {
     GoSearchTopBar(
@@ -93,9 +110,31 @@ private fun PodcastsScreen(
       onClickAbout = onClickAbout,
       onClickSettings = onClickSettings,
       onSearchQueryChange = onSearchQueryChange,
+      onSearchActivated = onSearchActivated,
+      searchActivated = uiMode == UiMode.SEARCH,
       onSearch = onSearch,
     )
+    LazyColumn(modifier = Modifier.weight(1f)) {
+      when (uiState) {
+        PodcastsUiState.Error -> Unit
+        PodcastsUiState.Loading -> Unit
+        is PodcastsUiState.Success -> {
+          items(uiState.podcasts, key = { it.collectionId }) {
+            PodcastListItem(podcast = it)
+          }
+        }
+      }
+    }
   }
+}
+
+@Composable
+private fun PodcastListItem(podcast: Podcast) {
+  ListItem(
+    headlineContent = {
+      Text(text = podcast.feedTitle)
+    },
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,11 +145,12 @@ private fun GoSearchTopBar(
   onSearchQueryChange: (String) -> Unit,
   searchQuery: String,
   onSearch: () -> Unit,
+  searchActivated: Boolean,
+  onSearchActivated: (Boolean) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
   val focusRequester = remember { FocusRequester() }
-  var searchActivated by remember { mutableStateOf(false) }
   var showOptions by remember { mutableStateOf(false) }
 
   TopAppBar(
@@ -131,7 +171,7 @@ private fun GoSearchTopBar(
           Spacer(modifier = Modifier.weight(1f))
         } else {
           IconButton(onClick = {
-            searchActivated = false
+            onSearchActivated(false)
           }) {
             Icon(
               imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
@@ -167,6 +207,7 @@ private fun GoSearchTopBar(
               if (searchQuery.isNotBlank()) {
                 IconButton(onClick = {
                   onSearchQueryChange("")
+                  keyboardController?.show()
                 }) {
                   Icon(imageVector = Icons.Outlined.Close, contentDescription = stringResource(id = R.string.close))
                 }
@@ -183,12 +224,12 @@ private fun GoSearchTopBar(
           )
 
           BackHandler {
-            searchActivated = false
+            onSearchActivated(false)
           }
         }
 
         if (!searchActivated) {
-          IconButton(onClick = { searchActivated = true }) {
+          IconButton(onClick = { onSearchActivated(true) }) {
             Icon(
               imageVector = Icons.Outlined.Search,
               contentDescription = stringResource(id = R.string.search),

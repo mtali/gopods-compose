@@ -19,6 +19,8 @@ import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.network.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface ItunesRepo {
+interface PodcastsRepo {
   fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>>
+
+  fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>>
 }

@@ -17,4 +17,5 @@ package com.colisa.podplay.core.models
 
 enum class ToastMessage {
   SERVICE_ERROR,
+  EMPTY_RESPONSE,
 }

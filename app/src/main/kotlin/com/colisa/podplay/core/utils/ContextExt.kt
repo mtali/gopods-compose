@@ -28,6 +28,7 @@ fun Context.toast(@StringRes msg: Int) {
 fun Context.toast(message: ToastMessage) {
   val res = when (message) {
     ToastMessage.SERVICE_ERROR -> R.string.service_error
+    ToastMessage.EMPTY_RESPONSE -> R.string.empty_response
   }
   toast(res)
 }

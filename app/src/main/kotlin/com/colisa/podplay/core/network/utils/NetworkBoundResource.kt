@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 inline fun <ResultType, RequestType> networkBoundResource(
   crossinline db: suspend () -> Flow<ResultType>,
@@ -39,6 +40,7 @@ inline fun <ResultType, RequestType> networkBoundResource(
 
       db().map { Resource.Success(it) }
     } catch (throwable: Throwable) {
+      Timber.e(throwable)
       db().map { Resource.Error(throwable, it) }
     }
   } else {

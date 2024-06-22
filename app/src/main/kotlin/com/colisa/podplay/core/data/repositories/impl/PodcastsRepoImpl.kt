@@ -15,7 +15,7 @@
  */
 package com.colisa.podplay.core.data.repositories.impl
 
-import com.colisa.podplay.core.data.repositories.ItunesRepo
+import com.colisa.podplay.core.data.repositories.PodcastsRepo
 import com.colisa.podplay.core.database.GoDatabase
 import com.colisa.podplay.core.database.daos.PodcastDao
 import com.colisa.podplay.core.database.daos.PodcastSearchResultDao
@@ -37,13 +37,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ItunesRepoImpl @Inject constructor(
+class PodcastsRepoImpl @Inject constructor(
   private val db: GoDatabase,
   private val itunesDataSource: ItunesDataSource,
   private val podcastSearchResultDao: PodcastSearchResultDao,
   private val podcastDao: PodcastDao,
   @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
-) : ItunesRepo {
+) : PodcastsRepo {
 
   override fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>> =
     networkBoundResource(
@@ -65,4 +65,8 @@ class ItunesRepoImpl @Inject constructor(
       },
       shouldFetch = { true },
     ).flowOn(ioDispatcher)
+
+  override fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>> {
+    return podcastDao.getPodcasts(true).map { it.toDomain() }
+  }
 }

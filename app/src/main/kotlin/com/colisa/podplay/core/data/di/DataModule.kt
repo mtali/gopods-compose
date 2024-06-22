@@ -15,8 +15,8 @@
  */
 package com.colisa.podplay.core.data.di
 
-import com.colisa.podplay.core.data.repositories.ItunesRepo
-import com.colisa.podplay.core.data.repositories.impl.ItunesRepoImpl
+import com.colisa.podplay.core.data.repositories.PodcastsRepo
+import com.colisa.podplay.core.data.repositories.impl.PodcastsRepoImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,5 +29,5 @@ abstract class DataModule {
 
   @Binds
   @Singleton
-  abstract fun bindsItunesRepo(impl: ItunesRepoImpl): ItunesRepo
+  abstract fun bindsItunesRepo(impl: PodcastsRepoImpl): PodcastsRepo
 }

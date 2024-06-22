@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 data class NetworkItunesPodcast(
   val collectionId: Long,
   val collectionName: String,
-  val feedUrl: String?,
+  val feedUrl: String? = null,
   val artworkUrl100: String,
   val artworkUrl600: String,
   val releaseDate: String,
