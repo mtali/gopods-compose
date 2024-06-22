@@ -78,7 +78,7 @@ fun PodcastsRoute(
 
   val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  val uiMode by viewModel.mode.collectAsStateWithLifecycle()
+  val showMode by viewModel.showMode.collectAsStateWithLifecycle()
 
   PodcastsScreen(
     searchQuery = searchQuery,
@@ -87,7 +87,7 @@ fun PodcastsRoute(
     onSearchQueryChange = viewModel::onSearchQueryChange,
     onSearch = viewModel::onSearch,
     onSearchActivated = viewModel::onSearchActivated,
-    uiMode = uiMode,
+    showMode = showMode,
     uiState = uiState,
   )
 }
@@ -99,7 +99,7 @@ private fun PodcastsScreen(
   onClickAbout: () -> Unit,
   onSearchQueryChange: (String) -> Unit,
   onSearch: () -> Unit,
-  uiMode: UiMode,
+  showMode: ShowMode,
   onSearchActivated: (Boolean) -> Unit,
   uiState: PodcastsUiState,
 ) {
@@ -111,7 +111,7 @@ private fun PodcastsScreen(
       onClickSettings = onClickSettings,
       onSearchQueryChange = onSearchQueryChange,
       onSearchActivated = onSearchActivated,
-      searchActivated = uiMode == UiMode.SEARCH,
+      searchActivated = showMode == ShowMode.SEARCH,
       onSearch = onSearch,
     )
     LazyColumn(modifier = Modifier.weight(1f)) {

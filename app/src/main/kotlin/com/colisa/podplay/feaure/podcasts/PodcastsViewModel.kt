@@ -46,21 +46,21 @@ class PodcastsViewModel @Inject constructor(
   private val _podcastsSearchResult = MutableStateFlow<List<Podcast>>(emptyList())
   private val _isLoading = MutableStateFlow(false)
 
-  private val _mode = MutableStateFlow(UiMode.SUBSCRIBED)
-  val mode: StateFlow<UiMode> = _mode
+  private val _showMode = MutableStateFlow(ShowMode.SUBSCRIBED)
+  val showMode: StateFlow<ShowMode> = _showMode
 
   val uiState = combine(
-    _mode,
+    _showMode,
     _isLoading,
     _subscribedPodcasts,
     _podcastsSearchResult,
-  ) { uiMode, isLoading, subscribedPodcasts, podcastSearchResult ->
+  ) { showMode, isLoading, subscribedPodcasts, podcastSearchResult ->
     PodcastsUiState.Success(
       isLoading = isLoading,
-      mode = uiMode,
-      podcasts = when (uiMode) {
-        UiMode.SEARCH -> podcastSearchResult
-        UiMode.SUBSCRIBED -> subscribedPodcasts
+      showMode = showMode,
+      podcasts = when (showMode) {
+        ShowMode.SEARCH -> podcastSearchResult
+        ShowMode.SUBSCRIBED -> subscribedPodcasts
       },
     )
   }
@@ -120,7 +120,7 @@ class PodcastsViewModel @Inject constructor(
   }
 
   fun onSearchActivated(active: Boolean) {
-    _mode.update { if (active) UiMode.SEARCH else UiMode.SUBSCRIBED }
+    _showMode.update { if (active) ShowMode.SEARCH else ShowMode.SUBSCRIBED }
   }
 
   private fun startLoading() = _isLoading.update { true }
@@ -130,7 +130,7 @@ class PodcastsViewModel @Inject constructor(
   private fun toast(message: ToastMessage) = toastHandler?.invoke(message)
 }
 
-enum class UiMode {
+enum class ShowMode {
   SEARCH, SUBSCRIBED
 }
 
@@ -140,6 +140,6 @@ sealed interface PodcastsUiState {
   data class Success(
     val isLoading: Boolean,
     val podcasts: List<Podcast>,
-    val mode: UiMode,
+    val showMode: ShowMode,
   ) : PodcastsUiState
 }
