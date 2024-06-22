@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.core.database.daos
+package com.colisa.podplay.core.network.dispatchers
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Upsert
-import com.colisa.podplay.core.database.entities.PodcastSearchResultEntity
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Qualifier
 
-@Dao
-interface PodcastSearchResultDao {
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Dispatcher(val goDispatcher: GoDispatcher)
 
-  @Upsert
-  fun insertSearchResult(entity: PodcastSearchResultEntity)
-
-  @Query("SELECT * FROM podcast_search_results WHERE term = :term")
-  fun getSearchResult(term: String): Flow<PodcastSearchResultEntity?>
+enum class GoDispatcher {
+  IO, Default, Main
 }

@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.core.database.daos
+package com.colisa.podplay.core.data.di
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Upsert
-import com.colisa.podplay.core.database.entities.PodcastSearchResultEntity
-import kotlinx.coroutines.flow.Flow
+import com.colisa.podplay.core.data.repositories.ItunesRepo
+import com.colisa.podplay.core.data.repositories.impl.ItunesRepoImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Dao
-interface PodcastSearchResultDao {
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataModule {
 
-  @Upsert
-  fun insertSearchResult(entity: PodcastSearchResultEntity)
-
-  @Query("SELECT * FROM podcast_search_results WHERE term = :term")
-  fun getSearchResult(term: String): Flow<PodcastSearchResultEntity?>
+  @Binds
+  @Singleton
+  abstract fun bindsItunesRepo(impl: ItunesRepoImpl): ItunesRepo
 }

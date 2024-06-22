@@ -19,8 +19,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.colisa.podplay.core.utils.now
-import java.time.Instant
+import com.colisa.podplay.core.models.Podcast
+import java.time.LocalDateTime
 
 @Entity(
   indices = [Index(value = ["collection_id"], unique = true)],
@@ -34,6 +34,21 @@ data class PodcastEntity(
   @ColumnInfo(name = "feed_description") val feedDescription: String = "",
   @ColumnInfo(name = "image_url") val imageUrl: String = "",
   @ColumnInfo(name = "image_url600") val imageUrl600: String = "",
-  @ColumnInfo(name = "last_updated") val lastUpdated: Instant = now(),
+  @ColumnInfo(name = "last_updated") val lastUpdated: String = "",
   @ColumnInfo(name = "subscribed") val subscribed: Boolean = false,
 )
+
+fun PodcastEntity.toDomain() =
+  Podcast(
+    id = id,
+    collectionId = collectionId,
+    feedUrl = feedUrl,
+    feedTitle = feedTitle,
+    feedDescription = feedDescription,
+    imageUrl = imageUrl,
+    imageUrl600 = imageUrl600,
+    lastUpdated = LocalDateTime.now(), // TODO: Work with this
+    subscribed = subscribed,
+  )
+
+fun List<PodcastEntity>.toDomain() = this.map { it.toDomain() }

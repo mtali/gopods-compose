@@ -32,7 +32,7 @@ interface PodcastDao {
   suspend fun upsertPodcast(podcastEntity: PodcastEntity)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertPodcasts(vararg packs: PodcastEntity)
+  fun insertPodcasts(packs: List<PodcastEntity>)
 
   @Query("DELETE FROM podcasts WHERE id = :id")
   suspend fun deletePodcast(id: Long): Int

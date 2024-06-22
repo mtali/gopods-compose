@@ -16,10 +16,19 @@
 package com.colisa.podplay.core.network.di
 
 import com.colisa.podplay.BuildConfig
+import com.colisa.podplay.core.network.ItunesDataSource
+import com.colisa.podplay.core.network.dispatchers.Dispatcher
+import com.colisa.podplay.core.network.dispatchers.GoDispatcher.Default
+import com.colisa.podplay.core.network.dispatchers.GoDispatcher.IO
+import com.colisa.podplay.core.network.dispatchers.GoDispatcher.Main
+import com.colisa.podplay.core.network.retrofit.RetrofitItunesNetwork
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -28,26 +37,44 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+abstract class NetworkModule {
 
-  @Provides
+  @Binds
   @Singleton
-  fun providesNetworkJson(): Json = Json {
-    ignoreUnknownKeys = true
-  }
+  abstract fun bindItunesDataResource(impl: RetrofitItunesNetwork): ItunesDataSource
 
-  @Provides
-  @Singleton
-  fun okHttpCallFactory(): Call.Factory {
-    return OkHttpClient.Builder()
-      .addInterceptor(
-        HttpLoggingInterceptor()
-          .apply {
-            if (BuildConfig.DEBUG) {
-              setLevel(HttpLoggingInterceptor.Level.BODY)
-            }
-          },
-      )
-      .build()
+  companion object {
+    @Provides
+    @Singleton
+    fun providesNetworkJson(): Json = Json {
+      ignoreUnknownKeys = true
+    }
+
+    @Provides
+    @Singleton
+    fun okHttpCallFactory(): Call.Factory {
+      return OkHttpClient.Builder()
+        .addInterceptor(
+          HttpLoggingInterceptor()
+            .apply {
+              if (BuildConfig.DEBUG) {
+                setLevel(HttpLoggingInterceptor.Level.BODY)
+              }
+            },
+        )
+        .build()
+    }
+
+    @Provides
+    @Dispatcher(IO)
+    fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Provides
+    @Dispatcher(Default)
+    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Dispatcher(Main)
+    fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
   }
 }

@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.core.database.daos
+package com.colisa.podplay.core.data.repositories
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Upsert
-import com.colisa.podplay.core.database.entities.PodcastSearchResultEntity
+import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.network.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface PodcastSearchResultDao {
-
-  @Upsert
-  fun insertSearchResult(entity: PodcastSearchResultEntity)
-
-  @Query("SELECT * FROM podcast_search_results WHERE term = :term")
-  fun getSearchResult(term: String): Flow<PodcastSearchResultEntity?>
+interface ItunesRepo {
+  fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>>
 }

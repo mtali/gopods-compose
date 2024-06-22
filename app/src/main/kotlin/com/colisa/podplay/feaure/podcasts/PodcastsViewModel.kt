@@ -17,18 +17,21 @@ package com.colisa.podplay.feaure.podcasts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.colisa.podplay.core.utils.isRunning
+import com.colisa.podplay.core.data.repositories.ItunesRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class PodcastsViewModel @Inject constructor() : ViewModel() {
+class PodcastsViewModel @Inject constructor(
+  private val itunesRepo: ItunesRepo,
+) : ViewModel() {
   private val _searchQuery = MutableStateFlow("")
   val searchQuery: StateFlow<String> = _searchQuery
 
@@ -41,9 +44,12 @@ class PodcastsViewModel @Inject constructor() : ViewModel() {
   fun onSearch() {
     val query = searchQuery.value.trim()
     if (query.isBlank()) return
-    if (searchJob.isRunning()) return
+    searchJob?.cancel()
     searchJob = viewModelScope.launch {
-      Timber.d("Searching: $query")
+      itunesRepo.searchPodcasts(term = query)
+        .collectLatest { response ->
+          Timber.d("Data: ${response.data}\nError ${response.error}")
+        }
     }
   }
 }

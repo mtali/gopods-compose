@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 inline fun <ResultType, RequestType> networkBoundResource(
-  crossinline db: () -> Flow<ResultType>,
+  crossinline db: suspend () -> Flow<ResultType>,
   crossinline fetch: suspend () -> RequestType,
   crossinline saveFetchResult: suspend (RequestType) -> Unit,
   crossinline shouldFetch: (ResultType) -> Boolean = { true },
