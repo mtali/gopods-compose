@@ -20,7 +20,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.colisa.podplay.core.models.Podcast
-import java.time.LocalDateTime
+import com.colisa.podplay.core.utils.toLocalDateTime
 
 @Entity(
   indices = [Index(value = ["collection_id"], unique = true)],
@@ -47,7 +47,7 @@ fun PodcastEntity.toDomain() =
     feedDescription = feedDescription,
     imageUrl = imageUrl,
     imageUrl600 = imageUrl600,
-    releaseDate = LocalDateTime.now(), // TODO: Work with this
+    releaseDate = releaseDate.toLocalDateTime(),
     subscribed = subscribed,
   )
 

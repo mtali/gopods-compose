@@ -71,6 +71,7 @@ import coil.request.ImageRequest
 import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.utils.display
 import com.colisa.podplay.core.utils.toast
 
 @Composable
@@ -141,7 +142,7 @@ private fun PodcastListItem(podcast: Podcast) {
       Text(text = podcast.feedTitle)
     },
     supportingContent = {
-      Text(text = "${podcast.releaseDate}") // TODO: Format this
+      Text(text = podcast.releaseDate.display())
     },
     leadingContent = {
       AsyncImage(
