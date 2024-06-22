@@ -263,6 +263,7 @@ private fun GoSearchTopBar(
               if (searchQuery.isNotBlank()) {
                 IconButton(onClick = {
                   onSearchQueryChange("")
+                  focusRequester.requestFocus()
                 }) {
                   Icon(imageVector = Icons.Outlined.Close, contentDescription = stringResource(id = R.string.close))
                 }
