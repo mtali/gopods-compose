@@ -66,7 +66,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -231,13 +233,15 @@ private fun GoSearchTopBar(
             focusRequester.requestFocus()
             onDispose {
               keyboardController?.hide()
-              onSearchQueryChange("")
+              // onSearchQueryChange("")
             }
           }
 
           OutlinedTextField(
-            value = searchQuery,
-            onValueChange = onSearchQueryChange,
+            value = TextFieldValue(text = searchQuery, selection = TextRange(searchQuery.length)),
+            onValueChange = {
+              onSearchQueryChange(it.text)
+            },
             modifier = Modifier
               .focusRequester(focusRequester)
               .weight(1f),
