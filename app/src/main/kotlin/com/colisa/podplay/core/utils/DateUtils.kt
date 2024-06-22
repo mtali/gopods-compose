@@ -20,9 +20,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-object DateUtils {
-  fun toLocalDateTime(date: String): LocalDateTime {
-    val zonedDateTime = ZonedDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
-    return zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime()
-  }
+fun String.toLocalDateTime(): LocalDateTime {
+  val zonedDateTime = ZonedDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
+  return zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime()
 }
+
+
+fun LocalDateTime.display() = "${this.toLocalDate()}"
