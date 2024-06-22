@@ -19,6 +19,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,6 +84,7 @@ fun PodcastsRoute(
   viewModel: PodcastsViewModel = hiltViewModel(),
   onClickAbout: () -> Unit,
   onClickSettings: () -> Unit,
+  onSelectPodcast: (Long) -> Unit,
 ) {
   val context = LocalContext.current
   viewModel.toastHandler = { context.toast(it) }
@@ -100,6 +102,7 @@ fun PodcastsRoute(
     onSearchActivated = viewModel::onSearchActivated,
     showMode = showMode,
     uiState = uiState,
+    onSelectPodcast = onSelectPodcast,
   )
 }
 
@@ -112,6 +115,7 @@ private fun PodcastsScreen(
   onSearch: () -> Unit,
   showMode: ShowMode,
   onSearchActivated: (Boolean) -> Unit,
+  onSelectPodcast: (Long) -> Unit,
   uiState: PodcastsUiState,
 ) {
   Column(modifier = Modifier.fillMaxSize()) {
@@ -133,8 +137,8 @@ private fun PodcastsScreen(
         PodcastsUiState.Error -> Unit
         PodcastsUiState.Loading -> Unit
         is PodcastsUiState.Success -> {
-          items(uiState.podcasts, key = { it.collectionId }) {
-            PodcastListItem(podcast = it)
+          items(uiState.podcasts, key = { it.collectionId }) { podcast ->
+            PodcastListItem(podcast = podcast, onClick = { podcast.id?.let { onSelectPodcast(it) } })
           }
         }
       }
@@ -156,7 +160,7 @@ private fun LinearLoading(visible: Boolean, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PodcastListItem(podcast: Podcast) {
+private fun PodcastListItem(podcast: Podcast, onClick: () -> Unit) {
   ListItem(
     headlineContent = {
       Text(text = podcast.feedTitle)
@@ -177,6 +181,7 @@ private fun PodcastListItem(podcast: Podcast) {
           .clip(RoundedCornerShape(8.dp)),
       )
     },
+    modifier = Modifier.clickable { onClick() },
   )
 }
 

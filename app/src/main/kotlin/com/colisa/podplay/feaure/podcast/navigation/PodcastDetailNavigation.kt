@@ -23,7 +23,7 @@ import com.colisa.podplay.feaure.podcast.PodcastDetailRoute
 
 const val PODCAST_DETAIL_ROUTE = "podcast_detail_route"
 
-fun NavController.navigateToPostDetail(navOptions: NavOptions? = null) {
+fun NavController.navigateToPostDetail(podcastId: Long, navOptions: NavOptions? = null) {
   navigate(PODCAST_DETAIL_ROUTE, navOptions)
 }
 

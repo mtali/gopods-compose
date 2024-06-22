@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.colisa.podplay.app.ui.GopodsAppState
+import com.colisa.podplay.feaure.podcast.navigation.navigateToPostDetail
 import com.colisa.podplay.feaure.podcast.navigation.podcastDetailScreen
 import com.colisa.podplay.feaure.podcasts.navigation.podcastsScreen
 import com.colisa.podplay.feaure.settings.navigation.navigateToSettings
@@ -43,6 +44,9 @@ fun GopodsNavHost(
       onClickAbout = {},
       onClickSettings = {
         navController.navigateToSettings()
+      },
+      onSelectPodcast = { podcastId ->
+        navController.navigateToPostDetail(podcastId)
       },
     )
   }
