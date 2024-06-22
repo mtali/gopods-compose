@@ -55,6 +55,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -202,6 +203,7 @@ private fun GoSearchTopBar(
   val keyboardController = LocalSoftwareKeyboardController.current
   val focusRequester = remember { FocusRequester() }
   var showOptions by remember { mutableStateOf(false) }
+  var shouldRequestFocus by rememberSaveable { mutableStateOf(true) }
 
   TopAppBar(
     title = { },
@@ -230,10 +232,12 @@ private fun GoSearchTopBar(
           }
 
           DisposableEffect(Unit) {
-            focusRequester.requestFocus()
+            if (shouldRequestFocus) {
+              focusRequester.requestFocus()
+            }
             onDispose {
               keyboardController?.hide()
-              // onSearchQueryChange("")
+              shouldRequestFocus = false
             }
           }
 
@@ -259,7 +263,6 @@ private fun GoSearchTopBar(
               if (searchQuery.isNotBlank()) {
                 IconButton(onClick = {
                   onSearchQueryChange("")
-                  keyboardController?.show()
                 }) {
                   Icon(imageVector = Icons.Outlined.Close, contentDescription = stringResource(id = R.string.close))
                 }
@@ -269,6 +272,7 @@ private fun GoSearchTopBar(
             keyboardActions = KeyboardActions(
               onSearch = {
                 if (searchQuery.isNotBlank()) {
+                  keyboardController?.hide()
                   onSearch()
                 }
               },
@@ -276,12 +280,16 @@ private fun GoSearchTopBar(
           )
 
           BackHandler {
+            keyboardController?.hide()
             onSearchActivated(false)
           }
         }
 
         if (!searchActivated) {
-          IconButton(onClick = { onSearchActivated(true) }) {
+          IconButton(onClick = {
+            shouldRequestFocus = true
+            onSearchActivated(true)
+          }) {
             Icon(
               imageVector = Icons.Outlined.Search,
               contentDescription = stringResource(id = R.string.search),
