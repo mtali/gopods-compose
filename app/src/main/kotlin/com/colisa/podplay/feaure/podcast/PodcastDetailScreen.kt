@@ -15,7 +15,10 @@
  */
 package com.colisa.podplay.feaure.podcast
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
@@ -25,4 +28,6 @@ fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel()) {
 
 @Composable
 private fun PodcastDetailScreen() {
+  Box(modifier = Modifier.fillMaxSize()) {
+  }
 }

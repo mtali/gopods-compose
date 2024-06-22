@@ -15,6 +15,8 @@
  */
 package com.colisa.podplay.app.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -37,6 +39,19 @@ fun GopodsNavHost(
     navController = navController,
     startDestination = startDestination,
     modifier = modifier,
+    enterTransition = {
+      slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(150))
+    },
+    exitTransition = {
+      slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(150))
+    },
+    popEnterTransition = {
+      slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(150))
+    },
+    popExitTransition = {
+      slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(150))
+    },
+
   ) {
     settingsScreen()
     podcastDetailScreen()
