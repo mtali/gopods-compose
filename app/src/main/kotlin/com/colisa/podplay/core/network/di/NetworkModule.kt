@@ -15,6 +15,7 @@
  */
 package com.colisa.podplay.core.network.di
 
+import android.content.Context
 import com.colisa.podplay.BuildConfig
 import com.colisa.podplay.core.network.ItunesDataSource
 import com.colisa.podplay.core.network.RssFeedDataSource
@@ -30,14 +31,19 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
+import okhttp3.CacheControl
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
 import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -70,8 +76,23 @@ abstract class NetworkModule {
 
     @Provides
     @Singleton
-    fun okHttpCallFactory(): Call.Factory {
+    fun okHttpCallFactory(@ApplicationContext context: Context): Call.Factory {
       return OkHttpClient.Builder()
+        .cache(
+          Cache(
+            directory = File(context.cacheDir, "http_cache"),
+            maxSize = 50L * 1024L * 1024L, // 50 MiB
+          ),
+        )
+        .addInterceptor { chain ->
+          val response = chain.proceed(chain.request())
+          val cacheControl = CacheControl.Builder()
+            .maxAge(15, TimeUnit.MINUTES)
+            .build()
+          response.newBuilder()
+            .header("Cache-Control", cacheControl.toString())
+            .build()
+        }
         .addInterceptor(
           HttpLoggingInterceptor()
             .apply {
