@@ -15,58 +15,94 @@
  */
 package com.colisa.podplay.feaure.podcast
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.EaseOutExpo
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.LinearLoading
-import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.designsystem.components.fullWidthItem
 import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.utils.toast
 
 @Composable
-fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel()) {
+fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel(), onBackClick: () -> Unit) {
   val context = LocalContext.current
   viewModel.toastHandler = { context.toast(it) }
 
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-  PodcastDetailScreen(uiState = uiState)
+  PodcastDetailScreen(uiState = uiState, onBackClick = onBackClick)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PodcastDetailScreen(
   uiState: PodcastDetailUiState,
+  onBackClick: () -> Unit
 ) {
   Scaffold(
     topBar = {
       TopAppBar(
-        title = { TopBarTitle(text = "Podcast") },
+        title = {},
+        navigationIcon = {
+          IconButton(onClick = onBackClick) {
+            Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(id = R.string.back))
+          }
+        },
         windowInsets = WindowInsets(top = 0.dp),
       )
     },
@@ -113,11 +149,131 @@ private fun PodcastDetailsHeaderItem(
   onToggleSubscription: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier = modifier) {
-    Text(text = podcast.feedTitle)
-    Text(text = podcast.imageUrl600)
-    Text(text = "Subscribe")
-    Text(text = podcast.feedDescription)
+  BoxWithConstraints(modifier = modifier.padding(16.dp)) {
+    val maxImageSize = this.maxWidth / 2
+    val imageSize = min(maxImageSize, 150.dp)
+    Column {
+      Row(
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        AsyncImage(
+          model = ImageRequest.Builder(LocalContext.current)
+            .data(podcast.imageUrl600)
+            .crossfade(true)
+            .build(),
+          contentDescription = podcast.feedTitle,
+          contentScale = ContentScale.Crop,
+          modifier = Modifier
+            .size(imageSize)
+            .clip(RoundedCornerShape(8.dp)),
+        )
+
+        Column(modifier = Modifier.padding(start = 16.dp)) {
+          Text(
+            text = podcast.feedTitle,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.headlineMedium,
+          )
+          Spacer(modifier = Modifier.height(8.dp))
+          SubscribeButton(isSubscribed = podcast.subscribed, onClick = onToggleSubscription)
+        }
+      }
+
+      PodcastDetailsDescription(
+        description = podcast.feedDescription,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 16.dp),
+      )
+    }
+  }
+}
+
+@Composable
+fun PodcastDetailsDescription(
+  description: String,
+  modifier: Modifier,
+) {
+  var isExpanded by remember { mutableStateOf(false) }
+  var showSeeMore by remember { mutableStateOf(false) }
+  val indicationSource = remember { MutableInteractionSource() }
+
+  Box(
+    modifier = modifier.clickable(
+      interactionSource = indicationSource,
+      indication = null,
+      onClick = { isExpanded = !isExpanded },
+    ),
+  ) {
+    Text(
+      text = description,
+      style = MaterialTheme.typography.bodyMedium,
+      maxLines = if (isExpanded) Int.MAX_VALUE else 3,
+      overflow = TextOverflow.Ellipsis,
+      onTextLayout = { result ->
+        showSeeMore = result.hasVisualOverflow
+      },
+      modifier = Modifier.animateContentSize(
+        animationSpec = tween(
+          durationMillis = 200,
+          easing = EaseOutExpo,
+        ),
+      ),
+    )
+    if (showSeeMore) {
+      Box(
+        modifier = Modifier
+          .align(Alignment.BottomEnd)
+          .background(MaterialTheme.colorScheme.surface),
+      ) {
+        Text(
+          text = stringResource(id = R.string.see_more),
+          style = MaterialTheme.typography.bodyMedium.copy(
+            textDecoration = TextDecoration.Underline,
+            fontWeight = FontWeight.Bold,
+          ),
+          modifier = Modifier.padding(start = 16.dp),
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun SubscribeButton(
+  isSubscribed: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Button(
+    onClick = onClick,
+    colors = ButtonDefaults.buttonColors(
+      containerColor = if (isSubscribed) {
+        MaterialTheme.colorScheme.tertiary
+      } else {
+        MaterialTheme.colorScheme.secondary
+      },
+    ),
+    modifier = modifier.semantics(mergeDescendants = true) { },
+  ) {
+    Icon(
+      imageVector = if (isSubscribed) {
+        Icons.Default.Check
+      } else {
+        Icons.Default.Add
+      },
+      contentDescription = null,
+    )
+    Text(
+      text = if (isSubscribed) {
+        stringResource(id = R.string.subscribed)
+      } else {
+        stringResource(id = R.string.subscribe)
+      },
+      modifier = Modifier.padding(start = 8.dp),
+    )
   }
 }
 

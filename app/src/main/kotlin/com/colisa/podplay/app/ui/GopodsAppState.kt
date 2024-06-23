@@ -21,10 +21,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.colisa.podplay.core.utils.isRunning
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @Composable
 fun rememberGopodsAppState(
@@ -44,6 +48,8 @@ class GopodsAppState(
   val coroutineScope: CoroutineScope,
 ) {
 
+  private var backJob: Job? = null
+
   val backStack = navController.currentBackStack
     .map { stackEntries ->
       stackEntries.map { entry -> entry.destination.route }
@@ -54,7 +60,15 @@ class GopodsAppState(
       initialValue = emptyList(),
     )
 
+  /**
+   * TODO: Replace this with actual navigation
+   */
   fun onBackClick() {
-    navController.popBackStack()
+    if (backJob.isRunning()) return
+    backJob = coroutineScope.launch {
+      navController.popBackStack()
+      delay(500)
+    }
+
   }
 }

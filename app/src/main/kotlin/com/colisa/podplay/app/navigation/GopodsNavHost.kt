@@ -54,7 +54,7 @@ fun GopodsNavHost(
 
   ) {
     settingsScreen()
-    podcastDetailScreen()
+    podcastDetailScreen(onBackClick = { appState.onBackClick() })
     podcastsScreen(
       onClickAbout = {},
       onClickSettings = {

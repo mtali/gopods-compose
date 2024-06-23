@@ -37,11 +37,11 @@ fun NavController.navigateToPostDetail(feedUrl: String, navOptions: NavOptions? 
   navigate("podcast_detail_route/${Uri.encode(feedUrl)}", navOptions)
 }
 
-fun NavGraphBuilder.podcastDetailScreen() {
+fun NavGraphBuilder.podcastDetailScreen(onBackClick: () -> Unit) {
   composable(
     route = PODCAST_DETAIL_ROUTE,
     arguments = listOf(navArgument(FEED_URL) { type = NavType.StringType }),
   ) {
-    PodcastDetailRoute()
+    PodcastDetailRoute(onBackClick = onBackClick)
   }
 }
