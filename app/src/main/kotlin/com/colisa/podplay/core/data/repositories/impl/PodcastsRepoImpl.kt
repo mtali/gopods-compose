@@ -89,7 +89,7 @@ class PodcastsRepoImpl @Inject constructor(
       },
       saveFetchResult = { response ->
         val dbPodcast = podcastDao.getPodcast(feedUrl).first()!!
-        val episodes = response.asEpisodeEntities(dbPodcast.id!!)
+        val episodes = response.asEpisodeEntities(dbPodcast.id)
         db.runInTransaction {
           podcastDao.upsertPodcast(dbPodcast.copy(feedDescription = response.description))
           episodeDao.insertEpisodes(episodes)

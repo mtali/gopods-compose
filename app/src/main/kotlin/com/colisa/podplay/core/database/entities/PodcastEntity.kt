@@ -28,7 +28,7 @@ import com.colisa.podplay.core.utils.toLocalDateTime
   tableName = "podcasts",
 )
 data class PodcastEntity(
-  @PrimaryKey(autoGenerate = false) val id: Long = 0,
+  @PrimaryKey(autoGenerate = false) val id: Long,
   @ColumnInfo(name = "collection_id") val collectionId: Long = 0,
   @ColumnInfo(name = "feed_url") val feedUrl: String = "",
   @ColumnInfo(name = "feed_title") val feedTitle: String = "",
