@@ -64,7 +64,7 @@ abstract class NetworkModule {
     fun provideRssParser(callFactory: Call.Factory): RssParser {
       return RssParserBuilder(
         callFactory = callFactory,
-        charset = Charset.forName("ISO-8859-7"),
+        charset = Charset.forName("UTF-8"),
       ).build()
     }
 
