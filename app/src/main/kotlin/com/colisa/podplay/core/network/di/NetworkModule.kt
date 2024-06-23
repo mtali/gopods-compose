@@ -17,11 +17,15 @@ package com.colisa.podplay.core.network.di
 
 import com.colisa.podplay.BuildConfig
 import com.colisa.podplay.core.network.ItunesDataSource
+import com.colisa.podplay.core.network.RssFeedDataSource
 import com.colisa.podplay.core.network.dispatchers.Dispatcher
 import com.colisa.podplay.core.network.dispatchers.GoDispatcher.Default
 import com.colisa.podplay.core.network.dispatchers.GoDispatcher.IO
 import com.colisa.podplay.core.network.dispatchers.GoDispatcher.Main
 import com.colisa.podplay.core.network.retrofit.RetrofitItunesNetwork
+import com.colisa.podplay.core.network.rss.RssFeedNetwork
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.RssParserBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -33,6 +37,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.nio.charset.Charset
 import javax.inject.Singleton
 
 @Module
@@ -43,7 +48,20 @@ abstract class NetworkModule {
   @Singleton
   abstract fun bindItunesDataResource(impl: RetrofitItunesNetwork): ItunesDataSource
 
+  @Binds
+  @Singleton
+  abstract fun bindsRssFeedDataSource(impl: RssFeedNetwork): RssFeedDataSource
+
   companion object {
+    @Provides
+    @Singleton
+    fun provideRssParser(callFactory: Call.Factory): RssParser {
+      return RssParserBuilder(
+        callFactory = callFactory,
+        charset = Charset.forName("ISO-8859-7"),
+      ).build()
+    }
+
     @Provides
     @Singleton
     fun providesNetworkJson(): Json = Json {

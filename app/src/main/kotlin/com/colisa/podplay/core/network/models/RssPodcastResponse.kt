@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.core.data.repositories
+package com.colisa.podplay.core.network.models
 
-import com.colisa.podplay.core.models.Podcast
-import com.colisa.podplay.core.network.utils.Resource
-import kotlinx.coroutines.flow.Flow
+data class RssPodcastResponse(
+  val url: String,
+  val title: String,
+  val description: String,
+  val lastBuildDate: String,
+  val episodes: List<RssFeedEpisode>,
+)
 
-interface PodcastsRepo {
-  fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>>
-  fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>>
-  fun getPodcast(podcastId: Long): Flow<Podcast?>
-  fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>>
-}
+data class RssFeedEpisode(
+  val author: String?,
+  val title: String?,
+  val content: String?,
+  val audio: String?,
+  val description: String?,
+  val guid: String?,
+  val pubDate: String?,
+  val image: String?,
+  val video: String?,
+  val link: String?,
+)

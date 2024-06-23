@@ -27,4 +27,5 @@ data class Podcast(
   val imageUrl600: String,
   val releaseDate: LocalDateTime,
   val subscribed: Boolean = false,
+  val episodes: List<Episode> = emptyList(),
 )

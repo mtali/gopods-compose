@@ -104,6 +104,8 @@ dependencies {
   // Coil
   implementation(libs.compose.coil)
 
+  // RSS Parser
+  implementation(libs.rssparser)
 
   // Testing
   testImplementation(libs.junit)

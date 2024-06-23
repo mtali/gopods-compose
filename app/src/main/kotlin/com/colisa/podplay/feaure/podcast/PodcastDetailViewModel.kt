@@ -17,6 +17,7 @@ package com.colisa.podplay.feaure.podcast
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.colisa.podplay.core.data.repositories.PodcastsRepo
 import com.colisa.podplay.feaure.podcast.navigation.PodcastDetailArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
@@ -25,9 +26,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PodcastDetailViewModel @Inject constructor(
   savedStateHandle: SavedStateHandle,
+  podcastsRepo: PodcastsRepo,
 ) : ViewModel() {
 
   private val args = PodcastDetailArg(savedStateHandle)
+
+  private val podcast = podcastsRepo.getPodcast(args.podcastId)
 
   init {
     Timber.d("Podcast: ${args.podcastId}")

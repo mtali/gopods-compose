@@ -49,7 +49,7 @@ class PodcastsRepoImpl @Inject constructor(
     networkBoundResource(
       db = {
         val search = podcastSearchResultDao.getSearchResult(term).first()
-        podcastDao.getPodcasts(search?.collectionIds ?: emptyList()).map { it.toDomain() }
+        podcastDao.getPodcasts(collectionIds = search?.collectionIds ?: emptyList()).map { it.toDomain() }
       },
       fetch = {
         itunesDataSource.searchPodcasts(term)
@@ -68,5 +68,12 @@ class PodcastsRepoImpl @Inject constructor(
 
   override fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>> {
     return podcastDao.getPodcasts(true).map { it.toDomain() }
+  }
+
+  override fun getPodcast(podcastId: Long): Flow<Podcast?> =
+    podcastDao.getPodcast(id = podcastId).map { entity -> entity?.toDomain() }
+
+  override fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>> {
+    TODO("Not yet implemented")
   }
 }

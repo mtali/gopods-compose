@@ -40,6 +40,9 @@ interface PodcastDao {
   @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
   fun getPodcast(feedUrl: String): Flow<PodcastEntity?>
 
+  @Query("SELECT * FROM podcasts WHERE id = :id")
+  fun getPodcast(id: Long): Flow<PodcastEntity?>
+
   @Query("SELECT * FROM podcasts WHERE subscribed = :subscribed")
   fun getPodcasts(subscribed: Boolean): Flow<List<PodcastEntity>>
 
