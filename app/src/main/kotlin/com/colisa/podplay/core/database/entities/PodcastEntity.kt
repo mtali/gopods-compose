@@ -20,6 +20,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.utils.htmlToSpannable
 import com.colisa.podplay.core.utils.toLocalDateTime
 
 @Entity(
@@ -27,7 +28,7 @@ import com.colisa.podplay.core.utils.toLocalDateTime
   tableName = "podcasts",
 )
 data class PodcastEntity(
-  @PrimaryKey val id: Long? = null,
+  @PrimaryKey(autoGenerate = false) val id: Long = 0,
   @ColumnInfo(name = "collection_id") val collectionId: Long = 0,
   @ColumnInfo(name = "feed_url") val feedUrl: String = "",
   @ColumnInfo(name = "feed_title") val feedTitle: String = "",
@@ -44,7 +45,7 @@ fun PodcastEntity.toDomain() =
     collectionId = collectionId,
     feedUrl = feedUrl,
     feedTitle = feedTitle,
-    feedDescription = feedDescription,
+    feedDescription = htmlToSpannable(feedDescription).toString(),
     imageUrl = imageUrl,
     imageUrl600 = imageUrl600,
     releaseDate = releaseDate.toLocalDateTime(),

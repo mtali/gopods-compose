@@ -42,7 +42,7 @@ fun ItunesPodcastSearchResponse.asPodcastEntities() =
       .filter { it.feedUrl != null }
       .map {
         PodcastEntity(
-          id = null,
+          id = it.collectionId,
           collectionId = it.collectionId,
           feedUrl = it.feedUrl!!,
           feedTitle = it.collectionName,

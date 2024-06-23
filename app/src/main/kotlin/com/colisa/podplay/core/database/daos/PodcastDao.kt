@@ -20,7 +20,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.Transaction
+import androidx.room.Update
 import com.colisa.podplay.core.database.entities.PodcastEntity
 import com.colisa.podplay.core.database.entities.PodcastWithEpisodesEntity
 import kotlinx.coroutines.flow.Flow
@@ -29,11 +30,26 @@ import kotlinx.coroutines.flow.map
 @Dao
 interface PodcastDao {
 
-  @Upsert
-  fun upsertPodcast(podcastEntity: PodcastEntity)
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  fun insertPodcast(entity: PodcastEntity): Long
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun insertPodcasts(entities: List<PodcastEntity>)
+  @Update
+  fun updatePodcast(entity: PodcastEntity)
+
+  @Query("SELECT subscribed FROM podcasts WHERE id = :id")
+  fun getPodcastSubscription(id: Long): Boolean?
+
+  /**
+   * Specialized upsert, here we just avoid overriding subscription state
+   */
+  @Transaction
+  fun upsertPodcast(entity: PodcastEntity) {
+    val result = insertPodcast(entity)
+    if (result == -1L) {
+      val subscribed = getPodcastSubscription(entity.id) ?: return
+      updatePodcast(entity.copy(subscribed = subscribed))
+    }
+  }
 
   @Query("DELETE FROM podcasts WHERE id = :id")
   suspend fun deletePodcast(id: Long): Int

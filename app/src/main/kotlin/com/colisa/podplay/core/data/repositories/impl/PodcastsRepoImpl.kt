@@ -64,7 +64,7 @@ class PodcastsRepoImpl @Inject constructor(
         val searchResultEntity = PodcastSearchResultEntity(term, collectionIds = collectionIds, count = response.resultCount)
         val podcasts = response.asPodcastEntities()
         db.runInTransaction {
-          podcastDao.insertPodcasts(podcasts)
+          podcasts.forEach { podcastDao.upsertPodcast(it) }
           podcastSearchResultDao.insertSearchResult(searchResultEntity)
         }
       },
