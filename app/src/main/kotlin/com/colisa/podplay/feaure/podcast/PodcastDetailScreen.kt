@@ -58,7 +58,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -69,10 +68,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.LinearLoading
+import com.colisa.podplay.core.designsystem.components.PodcastImage
 import com.colisa.podplay.core.designsystem.components.fullWidthItem
 import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.models.Podcast
@@ -162,13 +160,9 @@ private fun PodcastDetailsHeaderItem(
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier.fillMaxWidth(),
       ) {
-        AsyncImage(
-          model = ImageRequest.Builder(LocalContext.current)
-            .data(podcast.imageUrl600)
-            .crossfade(true)
-            .build(),
-          contentDescription = podcast.feedTitle,
-          contentScale = ContentScale.Crop,
+        PodcastImage(
+          imageUrl = podcast.imageUrl600,
+          contentDescription = null,
           modifier = Modifier
             .size(imageSize)
             .clip(RoundedCornerShape(8.dp)),
@@ -294,13 +288,9 @@ private fun EpisodeListItem(
       Text(text = episode.title)
     },
     leadingContent = {
-      AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-          .data(imageUrl)
-          .crossfade(true)
-          .build(),
+      PodcastImage(
+        imageUrl = imageUrl,
         contentDescription = null,
-        contentScale = ContentScale.Fit,
         modifier = Modifier
           .size(50.dp)
           .clip(RoundedCornerShape(8.dp)),

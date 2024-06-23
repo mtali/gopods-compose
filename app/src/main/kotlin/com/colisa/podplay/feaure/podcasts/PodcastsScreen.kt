@@ -59,7 +59,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -70,10 +69,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.LinearLoading
+import com.colisa.podplay.core.designsystem.components.PodcastImage
 import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.utils.display
@@ -156,13 +154,9 @@ private fun PodcastListItem(podcast: Podcast, onClick: () -> Unit) {
       Text(text = podcast.releaseDate.display())
     },
     leadingContent = {
-      AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-          .data(podcast.imageUrl)
-          .crossfade(true)
-          .build(),
-        contentDescription = podcast.feedTitle,
-        contentScale = ContentScale.Crop,
+      PodcastImage(
+        imageUrl = podcast.imageUrl,
+        contentDescription = null,
         modifier = Modifier
           .size(60.dp)
           .clip(RoundedCornerShape(8.dp)),
