@@ -60,8 +60,8 @@ fun GopodsNavHost(
       onClickSettings = {
         navController.navigateToSettings()
       },
-      onSelectPodcast = { podcastId ->
-        navController.navigateToPostDetail(podcastId)
+      onSelectPodcast = { feedUrl ->
+        navController.navigateToPostDetail(feedUrl)
       },
     )
   }

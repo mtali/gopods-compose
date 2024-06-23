@@ -22,6 +22,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.colisa.podplay.core.database.entities.PodcastEntity
+import com.colisa.podplay.core.database.entities.PodcastWithEpisodesEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -29,16 +30,19 @@ import kotlinx.coroutines.flow.map
 interface PodcastDao {
 
   @Upsert
-  suspend fun upsertPodcast(podcastEntity: PodcastEntity)
+  fun upsertPodcast(podcastEntity: PodcastEntity)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun insertPodcasts(packs: List<PodcastEntity>)
+  fun insertPodcasts(entities: List<PodcastEntity>)
 
   @Query("DELETE FROM podcasts WHERE id = :id")
   suspend fun deletePodcast(id: Long): Int
 
   @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
   fun getPodcast(feedUrl: String): Flow<PodcastEntity?>
+
+  @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
+  fun getPodcastWithEpisodes(feedUrl: String): Flow<PodcastWithEpisodesEntity>
 
   @Query("SELECT * FROM podcasts WHERE id = :id")
   fun getPodcast(id: Long): Flow<PodcastEntity?>

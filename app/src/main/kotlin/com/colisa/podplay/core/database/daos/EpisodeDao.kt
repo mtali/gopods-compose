@@ -16,6 +16,8 @@
 package com.colisa.podplay.core.database.daos
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.colisa.podplay.core.database.entities.EpisodeEntity
@@ -26,6 +28,9 @@ interface EpisodeDao {
 
   @Upsert
   suspend fun upsertEpisode(entity: EpisodeEntity)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  fun insertEpisodes(entities: List<EpisodeEntity>)
 
   @Query("SELECT * FROM episodes WHERE podcast_id = :podcastId")
   fun getEpisodes(podcastId: Long): Flow<List<EpisodeEntity>>

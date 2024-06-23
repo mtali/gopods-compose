@@ -20,9 +20,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.utils.newUid
-import com.colisa.podplay.core.utils.now
-import java.time.Instant
 
 @Entity(
   foreignKeys = [
@@ -37,12 +36,21 @@ import java.time.Instant
   tableName = "episodes",
 )
 data class EpisodeEntity(
-  @PrimaryKey val uid: String = newUid(),
+  @PrimaryKey val guid: String = newUid(),
   @ColumnInfo(name = "podcast_id") val podcastId: Long? = null,
   @ColumnInfo(name = "title") val title: String,
   @ColumnInfo(name = "description") val description: String,
   @ColumnInfo(name = "media_url") val mediaUrl: String,
-  @ColumnInfo(name = "type") val type: String,
-  @ColumnInfo(name = "release_date") val releaseDate: Instant = now(),
+  @ColumnInfo(name = "release_date") val releaseDate: String,
   @ColumnInfo(name = "duration") val duration: String,
 )
+
+fun EpisodeEntity.toDomain() =
+  Episode(
+    guid = guid,
+    title = title,
+    description = description,
+    mediaUrl = mediaUrl,
+    releaseDate = releaseDate,
+    duration = duration,
+  )

@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.colisa.podplay.core.models
+package com.colisa.podplay.core.database.entities
 
-data class Episode(
-  val guid: String,
-  val title: String,
-  val description: String,
-  val mediaUrl: String,
-  val releaseDate: String,
-  val duration: String,
+import androidx.room.Embedded
+import androidx.room.Relation
+
+data class PodcastWithEpisodesEntity(
+  @Embedded
+  val podcast: PodcastEntity,
+  @Relation(parentColumn = "id", entityColumn = "podcast_id")
+  val episodes: List<EpisodeEntity>,
 )
+
+fun PodcastWithEpisodesEntity.toDomain() =
+  podcast.toDomain().copy(episodes = episodes.map { episode -> episode.toDomain() })

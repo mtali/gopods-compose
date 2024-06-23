@@ -87,7 +87,7 @@ fun PodcastsRoute(
   viewModel: PodcastsViewModel = hiltViewModel(),
   onClickAbout: () -> Unit,
   onClickSettings: () -> Unit,
-  onSelectPodcast: (Long) -> Unit,
+  onSelectPodcast: (String) -> Unit,
 ) {
   val context = LocalContext.current
   viewModel.toastHandler = { context.toast(it) }
@@ -118,7 +118,7 @@ private fun PodcastsScreen(
   onSearch: () -> Unit,
   showMode: ShowMode,
   onSearchActivated: (Boolean) -> Unit,
-  onSelectPodcast: (Long) -> Unit,
+  onSelectPodcast: (String) -> Unit,
   uiState: PodcastsUiState,
 ) {
   Column(modifier = Modifier.fillMaxSize()) {
@@ -141,7 +141,7 @@ private fun PodcastsScreen(
         PodcastsUiState.Loading -> Unit
         is PodcastsUiState.Success -> {
           items(uiState.podcasts, key = { it.collectionId }) { podcast ->
-            PodcastListItem(podcast = podcast, onClick = { podcast.id?.let { onSelectPodcast(it) } })
+            PodcastListItem(podcast = podcast, onClick = { onSelectPodcast(podcast.feedUrl) })
           }
         }
       }

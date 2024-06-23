@@ -17,14 +17,17 @@ package com.colisa.podplay.core.data.repositories.impl
 
 import com.colisa.podplay.core.data.repositories.PodcastsRepo
 import com.colisa.podplay.core.database.GoDatabase
+import com.colisa.podplay.core.database.daos.EpisodeDao
 import com.colisa.podplay.core.database.daos.PodcastDao
 import com.colisa.podplay.core.database.daos.PodcastSearchResultDao
 import com.colisa.podplay.core.database.entities.PodcastSearchResultEntity
 import com.colisa.podplay.core.database.entities.toDomain
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.network.ItunesDataSource
+import com.colisa.podplay.core.network.RssFeedDataSource
 import com.colisa.podplay.core.network.dispatchers.Dispatcher
 import com.colisa.podplay.core.network.dispatchers.GoDispatcher.IO
+import com.colisa.podplay.core.network.models.asEpisodeEntities
 import com.colisa.podplay.core.network.models.asPodcastEntities
 import com.colisa.podplay.core.network.utils.Resource
 import com.colisa.podplay.core.network.utils.networkBoundResource
@@ -42,6 +45,8 @@ class PodcastsRepoImpl @Inject constructor(
   private val itunesDataSource: ItunesDataSource,
   private val podcastSearchResultDao: PodcastSearchResultDao,
   private val podcastDao: PodcastDao,
+  private val episodeDao: EpisodeDao,
+  private val rssFeedDataSource: RssFeedDataSource,
   @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : PodcastsRepo {
 
@@ -73,7 +78,22 @@ class PodcastsRepoImpl @Inject constructor(
   override fun getPodcast(podcastId: Long): Flow<Podcast?> =
     podcastDao.getPodcast(id = podcastId).map { entity -> entity?.toDomain() }
 
-  override fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>> {
-    TODO("Not yet implemented")
-  }
+  override fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>> =
+    networkBoundResource(
+      db = {
+        podcastDao.getPodcastWithEpisodes(feedUrl).map { it.toDomain() }
+      },
+      fetch = {
+        rssFeedDataSource.fetchPodcastRssFeed(feedUrl)
+      },
+      saveFetchResult = { response ->
+        val dbPodcast = podcastDao.getPodcast(feedUrl).first()!!
+        val episodes = response.asEpisodeEntities(dbPodcast.id!!)
+        db.runInTransaction {
+          podcastDao.upsertPodcast(dbPodcast.copy(feedDescription = response.description))
+          episodeDao.insertEpisodes(episodes)
+        }
+      },
+      shouldFetch = { true },
+    ).flowOn(ioDispatcher)
 }

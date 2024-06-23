@@ -15,6 +15,8 @@
  */
 package com.colisa.podplay.core.network.models
 
+import com.colisa.podplay.core.database.entities.EpisodeEntity
+
 data class RssPodcastResponse(
   val url: String,
   val title: String,
@@ -35,3 +37,16 @@ data class RssFeedEpisode(
   val video: String?,
   val link: String?,
 )
+
+fun RssPodcastResponse.asEpisodeEntities(podcastId: Long) =
+  episodes.map {
+    EpisodeEntity(
+      guid = it.guid ?: "",
+      podcastId = podcastId,
+      title = it.title ?: "",
+      description = it.description ?: it.content ?: "",
+      mediaUrl = it.audio ?: "",
+      releaseDate = it.pubDate ?: "",
+      duration = "",
+    )
+  }
