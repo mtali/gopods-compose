@@ -16,9 +16,6 @@
 package com.colisa.podplay.feaure.podcasts
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +41,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -77,6 +73,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.colisa.podplay.R
+import com.colisa.podplay.core.designsystem.components.LinearLoading
 import com.colisa.podplay.core.designsystem.components.TopBarTitle
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.utils.display
@@ -145,19 +142,6 @@ private fun PodcastsScreen(
           }
         }
       }
-    }
-  }
-}
-
-@Composable
-private fun LinearLoading(visible: Boolean, modifier: Modifier = Modifier) {
-  Box(modifier = modifier) {
-    AnimatedVisibility(
-      visible = visible,
-      enter = slideInVertically(),
-      exit = slideOutVertically(),
-    ) {
-      LinearProgressIndicator(Modifier.fillMaxWidth())
     }
   }
 }

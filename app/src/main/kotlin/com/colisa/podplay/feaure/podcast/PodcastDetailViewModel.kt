@@ -19,13 +19,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.colisa.podplay.core.data.repositories.PodcastsRepo
+import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.models.ToastMessage
 import com.colisa.podplay.core.network.utils.Resource
 import com.colisa.podplay.feaure.podcast.navigation.PodcastDetailArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,29 +37,33 @@ class PodcastDetailViewModel @Inject constructor(
 
   private val args = PodcastDetailArg(savedStateHandle)
 
+  var toastHandler: ((ToastMessage) -> Unit)? = null
+
   val uiState = podcastsRepo.getPodcastFeed(feedUrl = args.feedUrl)
     .map { result ->
       when (result) {
         is Resource.Error -> {
-          Timber.d("Error: ${result.error} ${result.data}")
+          toastHandler?.invoke(ToastMessage.SERVICE_ERROR)
+          PodcastDetailUiState(isLoading = false, podcast = result.data)
         }
 
         is Resource.Loading -> {
-          Timber.d("Loading: ${result.error} ${result.data}")
+          PodcastDetailUiState(isLoading = true, podcast = result.data)
         }
 
         is Resource.Success -> {
-          Timber.d("Success: ${result.error} ${result.data}")
+          PodcastDetailUiState(isLoading = false, podcast = result.data)
         }
       }
     }
     .stateIn(
       scope = viewModelScope,
       started = SharingStarted.WhileSubscribed(5_000),
-      initialValue = null,
+      initialValue = PodcastDetailUiState(isLoading = true, podcast = null),
     )
-
-  init {
-    Timber.d("Podcast feed: ${args.feedUrl}")
-  }
 }
+
+data class PodcastDetailUiState(
+  val isLoading: Boolean,
+  val podcast: Podcast?,
+)
