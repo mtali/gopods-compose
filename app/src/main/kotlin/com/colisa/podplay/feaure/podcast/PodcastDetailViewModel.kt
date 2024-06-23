@@ -48,7 +48,7 @@ class PodcastDetailViewModel @Inject constructor(
         }
 
         is Resource.Loading -> {
-          PodcastDetailUiState(isLoading = true, podcast = result.data)
+          PodcastDetailUiState(isLoading = result.data?.episodes.isNullOrEmpty(), podcast = result.data)
         }
 
         is Resource.Success -> {
