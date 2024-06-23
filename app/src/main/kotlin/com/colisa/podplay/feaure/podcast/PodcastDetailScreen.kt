@@ -92,7 +92,7 @@ fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel(), onBa
 @Composable
 private fun PodcastDetailScreen(
   uiState: PodcastDetailUiState,
-  onBackClick: () -> Unit
+  onBackClick: () -> Unit,
 ) {
   Scaffold(
     topBar = {

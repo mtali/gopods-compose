@@ -69,6 +69,5 @@ class GopodsAppState(
       navController.popBackStack()
       delay(500)
     }
-
   }
 }
