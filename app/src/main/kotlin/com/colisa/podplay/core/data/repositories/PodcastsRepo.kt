@@ -24,4 +24,5 @@ interface PodcastsRepo {
   fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>>
   fun getPodcast(podcastId: Long): Flow<Podcast?>
   fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>>
+  suspend fun toggleSubscription(podcastId: Long)
 }

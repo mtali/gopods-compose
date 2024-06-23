@@ -27,12 +27,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PodcastDetailViewModel @Inject constructor(
   savedStateHandle: SavedStateHandle,
-  podcastsRepo: PodcastsRepo,
+  private val podcastsRepo: PodcastsRepo,
 ) : ViewModel() {
 
   private val args = PodcastDetailArg(savedStateHandle)
@@ -61,6 +62,12 @@ class PodcastDetailViewModel @Inject constructor(
       started = SharingStarted.WhileSubscribed(5_000),
       initialValue = PodcastDetailUiState(isLoading = true, podcast = null),
     )
+
+  fun onToggleSubscription(podcastId: Long) {
+    viewModelScope.launch {
+      podcastsRepo.toggleSubscription(podcastId)
+    }
+  }
 }
 
 data class PodcastDetailUiState(

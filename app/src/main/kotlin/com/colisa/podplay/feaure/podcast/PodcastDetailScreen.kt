@@ -85,7 +85,11 @@ fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel(), onBa
 
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-  PodcastDetailScreen(uiState = uiState, onBackClick = onBackClick)
+  PodcastDetailScreen(
+    uiState = uiState,
+    onBackClick = onBackClick,
+    onToggleSubscription = viewModel::onToggleSubscription,
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,6 +97,7 @@ fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel(), onBa
 private fun PodcastDetailScreen(
   uiState: PodcastDetailUiState,
   onBackClick: () -> Unit,
+  onToggleSubscription: (Long) -> Unit,
 ) {
   Scaffold(
     topBar = {
@@ -124,7 +129,7 @@ private fun PodcastDetailScreen(
           fullWidthItem {
             PodcastDetailsHeaderItem(
               podcast = podcast,
-              onToggleSubscription = {},
+              onToggleSubscription = onToggleSubscription,
               modifier = Modifier.fillMaxWidth(),
             )
           }
@@ -146,7 +151,7 @@ private fun PodcastDetailScreen(
 @Composable
 private fun PodcastDetailsHeaderItem(
   podcast: Podcast,
-  onToggleSubscription: () -> Unit,
+  onToggleSubscription: (Long) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   BoxWithConstraints(modifier = modifier.padding(16.dp)) {
@@ -177,7 +182,7 @@ private fun PodcastDetailsHeaderItem(
             style = MaterialTheme.typography.headlineMedium,
           )
           Spacer(modifier = Modifier.height(8.dp))
-          SubscribeButton(isSubscribed = podcast.subscribed, onClick = onToggleSubscription)
+          SubscribeButton(isSubscribed = podcast.subscribed, onClick = { onToggleSubscription(podcast.id) })
         }
       }
 

@@ -76,4 +76,7 @@ interface PodcastDao {
       podcasts.sortedWith(compareBy { order.get(it.collectionId.toInt()) })
     }
   }
+
+  @Query("UPDATE podcasts SET subscribed = NOT subscribed WHERE id = :id")
+  suspend fun toggleSubscription(id: Long)
 }

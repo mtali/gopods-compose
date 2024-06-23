@@ -18,7 +18,7 @@ package com.colisa.podplay.core.models
 import java.time.LocalDateTime
 
 data class Podcast(
-  val id: Long? = null,
+  val id: Long,
   val collectionId: Long,
   val feedUrl: String,
   val feedTitle: String,
