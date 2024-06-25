@@ -71,6 +71,7 @@ rssparser = { module = "com.prof18.rssparser:rssparser", version.ref = "rssparse
 # Paging
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+paging-room = { module = "androidx.room:room-paging", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

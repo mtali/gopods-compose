@@ -15,6 +15,8 @@
  */
 package com.colisa.podplay.core.data.repositories
 
+import androidx.paging.PagingData
+import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.network.utils.Resource
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +24,8 @@ import kotlinx.coroutines.flow.Flow
 interface PodcastsRepo {
   fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>>
   fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>>
-  fun getPodcast(podcastId: Long): Flow<Podcast?>
   fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>>
+  fun requirePodcast(feedUrl: String): Flow<Podcast>
+  fun getEpisodesPaged(podcastId: Long, feedUrl: String): Flow<PagingData<Episode>>
   suspend fun toggleSubscription(podcastId: Long)
 }

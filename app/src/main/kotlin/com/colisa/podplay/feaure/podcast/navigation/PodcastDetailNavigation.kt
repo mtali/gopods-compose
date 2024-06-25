@@ -26,21 +26,28 @@ import androidx.navigation.navArgument
 import com.colisa.podplay.feaure.podcast.PodcastDetailRoute
 
 private const val FEED_URL = "feedUrl"
-const val PODCAST_DETAIL_ROUTE = "podcast_detail_route/{$FEED_URL}"
+private const val PODCAST_ID = "podcastId"
+const val PODCAST_DETAIL_ROUTE = "podcast_detail_route/{$PODCAST_ID}/{$FEED_URL}"
 
-class PodcastDetailArg(val feedUrl: String) {
+class PodcastDetailArg(val podcastId: Long, val feedUrl: String) {
   constructor(savedStateHandle: SavedStateHandle) :
-    this(Uri.decode(checkNotNull(savedStateHandle.get<String>(FEED_URL))))
+    this(
+      podcastId = checkNotNull(savedStateHandle.get<Long>(PODCAST_ID)),
+      feedUrl = Uri.decode(checkNotNull(savedStateHandle.get<String>(FEED_URL))),
+    )
 }
 
-fun NavController.navigateToPostDetail(feedUrl: String, navOptions: NavOptions? = null) {
-  navigate("podcast_detail_route/${Uri.encode(feedUrl)}", navOptions)
+fun NavController.navigateToPostDetail(podcastId: Long, feedUrl: String, navOptions: NavOptions? = null) {
+  navigate("podcast_detail_route/$podcastId/${Uri.encode(feedUrl)}", navOptions)
 }
 
 fun NavGraphBuilder.podcastDetailScreen(onBackClick: () -> Unit) {
   composable(
     route = PODCAST_DETAIL_ROUTE,
-    arguments = listOf(navArgument(FEED_URL) { type = NavType.StringType }),
+    arguments = listOf(
+      navArgument(FEED_URL) { type = NavType.StringType },
+      navArgument(PODCAST_ID) { type = NavType.LongType },
+    ),
   ) {
     PodcastDetailRoute(onBackClick = onBackClick)
   }

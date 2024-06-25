@@ -15,6 +15,7 @@
  */
 package com.colisa.podplay.core.database.daos
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -34,4 +35,7 @@ interface EpisodeDao {
 
   @Query("SELECT * FROM episodes WHERE podcast_id = :podcastId")
   fun getEpisodes(podcastId: Long): Flow<List<EpisodeEntity>>
+
+  @Query("SELECT * FROM episodes WHERE podcast_id = :podcastId")
+  fun getEpisodesPaged(podcastId: Long): PagingSource<Int, EpisodeEntity>
 }

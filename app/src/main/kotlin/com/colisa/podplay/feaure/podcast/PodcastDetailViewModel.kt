@@ -18,14 +18,12 @@ package com.colisa.podplay.feaure.podcast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.colisa.podplay.core.data.repositories.PodcastsRepo
-import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.models.ToastMessage
-import com.colisa.podplay.core.network.utils.Resource
 import com.colisa.podplay.feaure.podcast.navigation.PodcastDetailArg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,27 +38,14 @@ class PodcastDetailViewModel @Inject constructor(
 
   var toastHandler: ((ToastMessage) -> Unit)? = null
 
-  val uiState = podcastsRepo.getPodcastFeed(feedUrl = args.feedUrl)
-    .map { result ->
-      when (result) {
-        is Resource.Error -> {
-          toastHandler?.invoke(ToastMessage.SERVICE_ERROR)
-          PodcastDetailUiState(isLoading = false, podcast = result.data)
-        }
+  val episodesPagingData = podcastsRepo.getEpisodesPaged(podcastId = args.podcastId, feedUrl = args.feedUrl)
+    .cachedIn(scope = viewModelScope)
 
-        is Resource.Loading -> {
-          PodcastDetailUiState(isLoading = result.data?.episodes.isNullOrEmpty(), podcast = result.data)
-        }
-
-        is Resource.Success -> {
-          PodcastDetailUiState(isLoading = false, podcast = result.data)
-        }
-      }
-    }
+  val podcastSteam = podcastsRepo.requirePodcast(feedUrl = args.feedUrl)
     .stateIn(
       scope = viewModelScope,
       started = SharingStarted.WhileSubscribed(5_000),
-      initialValue = PodcastDetailUiState(isLoading = true, podcast = null),
+      initialValue = null,
     )
 
   fun onToggleSubscription(podcastId: Long) {
@@ -69,8 +54,3 @@ class PodcastDetailViewModel @Inject constructor(
     }
   }
 }
-
-data class PodcastDetailUiState(
-  val isLoading: Boolean,
-  val podcast: Podcast?,
-)

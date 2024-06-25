@@ -111,6 +111,7 @@ dependencies {
   // Paging
   implementation(libs.paging.runtime)
   implementation(libs.paging.compose)
+  implementation(libs.paging.room)
 
   // Testing
   testImplementation(libs.junit)

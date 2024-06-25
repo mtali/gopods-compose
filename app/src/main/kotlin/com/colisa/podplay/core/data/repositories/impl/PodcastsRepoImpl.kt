@@ -15,6 +15,12 @@
  */
 package com.colisa.podplay.core.data.repositories.impl
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.colisa.podplay.core.data.mediators.EpisodesFeedMediator
 import com.colisa.podplay.core.data.repositories.PodcastsRepo
 import com.colisa.podplay.core.database.GoDatabase
 import com.colisa.podplay.core.database.daos.EpisodeDao
@@ -22,6 +28,7 @@ import com.colisa.podplay.core.database.daos.PodcastDao
 import com.colisa.podplay.core.database.daos.PodcastSearchResultDao
 import com.colisa.podplay.core.database.entities.PodcastSearchResultEntity
 import com.colisa.podplay.core.database.entities.toDomain
+import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.models.Podcast
 import com.colisa.podplay.core.network.ItunesDataSource
 import com.colisa.podplay.core.network.RssFeedDataSource
@@ -76,9 +83,6 @@ class PodcastsRepoImpl @Inject constructor(
     return podcastDao.getPodcasts(true).map { it.toDomain() }
   }
 
-  override fun getPodcast(podcastId: Long): Flow<Podcast?> =
-    podcastDao.getPodcast(id = podcastId).map { entity -> entity?.toDomain() }
-
   override fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>> =
     networkBoundResource(
       db = {
@@ -97,6 +101,20 @@ class PodcastsRepoImpl @Inject constructor(
       },
       shouldFetch = { true },
     ).flowOn(ioDispatcher)
+
+  override fun requirePodcast(feedUrl: String): Flow<Podcast> =
+    podcastDao.getPodcast(feedUrl).map { it.toDomain() }.flowOn(ioDispatcher)
+
+  @OptIn(ExperimentalPagingApi::class)
+  override fun getEpisodesPaged(podcastId: Long, feedUrl: String): Flow<PagingData<Episode>> {
+    return Pager(
+      config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+      pagingSourceFactory = {
+        episodeDao.getEpisodesPaged(podcastId)
+      },
+      remoteMediator = EpisodesFeedMediator(db = db, feedDataSource = rssFeedDataSource, feedUrl = feedUrl),
+    ).flow.map { pageData -> pageData.map { episode -> episode.toDomain() } }
+  }
 
   override suspend fun toggleSubscription(podcastId: Long) = withContext(ioDispatcher) {
     podcastDao.toggleSubscription(podcastId)

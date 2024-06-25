@@ -55,10 +55,13 @@ interface PodcastDao {
   suspend fun deletePodcast(id: Long): Int
 
   @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
-  fun getPodcast(feedUrl: String): Flow<PodcastEntity?>
+  fun getPodcast(feedUrl: String): Flow<PodcastEntity>
 
   @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
   fun getPodcastWithEpisodes(feedUrl: String): Flow<PodcastWithEpisodesEntity>
+
+  @Query("SELECT * FROM podcasts WHERE feed_url = :feedUrl")
+  fun getPodcastByFeedUrl(feedUrl: String): Flow<PodcastEntity>
 
   @Query("SELECT * FROM podcasts WHERE id = :id")
   fun getPodcast(id: Long): Flow<PodcastEntity?>

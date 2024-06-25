@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -54,6 +53,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,12 +75,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.colisa.podplay.R
 import com.colisa.podplay.core.designsystem.components.LinearLoading
 import com.colisa.podplay.core.designsystem.components.PodcastImage
 import com.colisa.podplay.core.designsystem.components.fullWidthItem
 import com.colisa.podplay.core.models.Episode
 import com.colisa.podplay.core.models.Podcast
+import com.colisa.podplay.core.models.ToastMessage
 import com.colisa.podplay.core.utils.toast
 
 @Composable
@@ -88,21 +93,30 @@ fun PodcastDetailRoute(viewModel: PodcastDetailViewModel = hiltViewModel(), onBa
   val context = LocalContext.current
   viewModel.toastHandler = { context.toast(it) }
 
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val podcast by viewModel.podcastSteam.collectAsStateWithLifecycle()
+  val episodes = viewModel.episodesPagingData.collectAsLazyPagingItems()
+
+  LaunchedEffect(episodes.loadState) {
+    if (episodes.loadState.refresh is LoadState.Error) {
+      viewModel.toastHandler?.invoke(ToastMessage.SERVICE_ERROR)
+    }
+  }
 
   PodcastDetailScreen(
-    uiState = uiState,
+    podcast = podcast,
     onBackClick = onBackClick,
     onToggleSubscription = viewModel::onToggleSubscription,
+    episodes = episodes,
   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PodcastDetailScreen(
-  uiState: PodcastDetailUiState,
+  podcast: Podcast?,
   onBackClick: () -> Unit,
   onToggleSubscription: (Long) -> Unit,
+  episodes: LazyPagingItems<Episode>,
 ) {
   Scaffold(
     topBar = {
@@ -123,13 +137,12 @@ private fun PodcastDetailScreen(
         .padding(innerPadding)
         .fillMaxSize(),
     ) {
-      LinearLoading(visible = uiState.isLoading)
+      LinearLoading(visible = episodes.loadState.refresh is LoadState.Loading)
 
       LazyVerticalGrid(
         columns = GridCells.Adaptive(362.dp),
         Modifier.weight(1f),
       ) {
-        val podcast = uiState.podcast
         if (podcast != null) {
           fullWidthItem {
             PodcastDetailsHeaderItem(
@@ -139,13 +152,19 @@ private fun PodcastDetailScreen(
             )
           }
 
-          items(podcast.episodes, key = { it.guid }) { episode ->
-            EpisodeListItem(
-              episode = episode,
-              onClick = { },
-              modifier = Modifier.fillMaxWidth(),
-              imageUrl = podcast.imageUrl,
-            )
+          items(
+            count = episodes.itemCount,
+            key = episodes.itemKey { it.guid },
+          ) { index ->
+            val episode = episodes[index]
+            if (episode != null) {
+              EpisodeListItem(
+                episode = episode,
+                onClick = { },
+                modifier = Modifier.fillMaxWidth(),
+                imageUrl = podcast.imageUrl,
+              )
+            }
           }
         }
       }
