@@ -108,6 +108,10 @@ dependencies {
   // RSS Parser
   implementation(libs.rssparser)
 
+  // Paging
+  implementation(libs.paging.runtime)
+  implementation(libs.paging.compose)
+
   // Testing
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
