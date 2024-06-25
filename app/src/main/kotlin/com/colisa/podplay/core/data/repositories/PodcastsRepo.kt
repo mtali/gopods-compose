@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.Flow
 interface PodcastsRepo {
   fun searchPodcasts(term: String): Flow<Resource<List<Podcast>>>
   fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>>
-  fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>>
   fun requirePodcast(feedUrl: String): Flow<Podcast>
   fun getEpisodesPaged(podcastId: Long, feedUrl: String): Flow<PagingData<Episode>>
   suspend fun toggleSubscription(podcastId: Long)

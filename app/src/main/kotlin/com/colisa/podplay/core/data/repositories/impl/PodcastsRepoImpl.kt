@@ -34,7 +34,6 @@ import com.colisa.podplay.core.network.ItunesDataSource
 import com.colisa.podplay.core.network.RssFeedDataSource
 import com.colisa.podplay.core.network.dispatchers.Dispatcher
 import com.colisa.podplay.core.network.dispatchers.GoDispatcher.IO
-import com.colisa.podplay.core.network.models.asEpisodeEntities
 import com.colisa.podplay.core.network.models.asPodcastEntities
 import com.colisa.podplay.core.network.utils.Resource
 import com.colisa.podplay.core.network.utils.networkBoundResource
@@ -82,25 +81,6 @@ class PodcastsRepoImpl @Inject constructor(
   override fun getPodcasts(subscribed: Boolean): Flow<List<Podcast>> {
     return podcastDao.getPodcasts(true).map { it.toDomain() }
   }
-
-  override fun getPodcastFeed(feedUrl: String): Flow<Resource<Podcast>> =
-    networkBoundResource(
-      db = {
-        podcastDao.getPodcastWithEpisodes(feedUrl).map { it.toDomain() }
-      },
-      fetch = {
-        rssFeedDataSource.fetchPodcastRssFeed(feedUrl)
-      },
-      saveFetchResult = { response ->
-        val dbPodcast = podcastDao.getPodcast(feedUrl).first()!!
-        val episodes = response.asEpisodeEntities(dbPodcast.id)
-        db.runInTransaction {
-          podcastDao.upsertPodcast(dbPodcast.copy(feedDescription = response.description))
-          episodeDao.insertEpisodes(episodes)
-        }
-      },
-      shouldFetch = { true },
-    ).flowOn(ioDispatcher)
 
   override fun requirePodcast(feedUrl: String): Flow<Podcast> =
     podcastDao.getPodcast(feedUrl).map { it.toDomain() }.flowOn(ioDispatcher)
