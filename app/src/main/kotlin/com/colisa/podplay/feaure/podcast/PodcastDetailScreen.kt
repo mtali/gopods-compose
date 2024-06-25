@@ -137,7 +137,7 @@ private fun PodcastDetailScreen(
         .padding(innerPadding)
         .fillMaxSize(),
     ) {
-      LinearLoading(visible = episodes.loadState.refresh is LoadState.Loading)
+      LinearLoading(visible = episodes.loadState.refresh is LoadState.Loading && episodes.itemCount == 0)
 
       LazyVerticalGrid(
         columns = GridCells.Adaptive(362.dp),
