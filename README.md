@@ -10,6 +10,8 @@
 GoPods is a modern podcast application developed entirely in Kotlin, leveraging Jetpack Compose for a fully declarative user interface. This project
 represents a comprehensive modernization and complete rewrite of its predecessor, which can be found [here](https://github.com/mtali/bolt).
 
+[![Get it on Google Play](https://media.lisk.com/init/google_store_912cd733ee.png?auto=compress,format&fit=max&w=96&q=80)](https://play.google.com/store/apps/details?id=com.colisa.podplay)
+
 ## Features
 
 - **Kotlin**: A modern, expressive programming language.
